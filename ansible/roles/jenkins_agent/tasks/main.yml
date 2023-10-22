@@ -29,3 +29,26 @@
     path: /home/jenkins
     mode: '0777'
   when: folder_created.changed
+
+- name: Ensure python3.10 is installed
+  become: yes
+  become_method: sudo
+  apt:
+    update_cache: yes
+    name: python3.10
+    state: present
+
+- name: Ensure python3-pip is installed
+  become: yes
+  become_method: sudo
+  apt:
+    update_cache: yes
+    name: python3-pip
+    state: present
+
+- name: Install python3.10 virtualenv
+  become: yes
+  become_method: sudo
+  apt:
+    name: python3.10-venv
+    state: present

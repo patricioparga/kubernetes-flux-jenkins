@@ -3,6 +3,12 @@ pipeline {
         label 'agent_one'
     }
 
+    stage('Print PATH') {
+        steps {
+            sh 'echo $PATH'
+        }
+    }
+
     stages {
         stage('Checkout') {
             steps {
