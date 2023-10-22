@@ -3,17 +3,17 @@ pipeline {
         label 'agent_one'
     }
 
-    stage('Print PATH') {
-        steps {
-            sh 'echo $PATH'
-        }
-    }
-
     stages {
         stage('Checkout') {
             steps {
                 // Checkout the code from the GitHub repository
                 checkout scm
+            }
+        }
+
+        stage('Print PATH') {
+            steps {
+                sh 'echo $PATH'
             }
         }
 
