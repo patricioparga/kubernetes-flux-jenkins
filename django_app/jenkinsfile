@@ -2,7 +2,6 @@ pipeline {
     agent {
         label 'agent_one'
     }
-
     stages {
         stage('Checkout') {
             steps {
@@ -19,10 +18,13 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                script {
-                    // Setup a virtual environment and install requirements
-                    sh '/usr/bin/python3 -m venv venv'
-                    sh '. venv/bin/activate && pip install -r requirements.txt'
+                dir('django_app') {
+                    script {
+                        // Setup a virtual environment and install requirements
+                        sh 'pwd'
+                        sh 'ls -la'
+                        sh 'pip install -r requirements.txt'
+                    }
                 }
             }
         }
@@ -41,9 +43,9 @@ pipeline {
             steps {
                 script {
                     // Assuming you have a Dockerfile to build your Django app
-                    sh 'docker build -t your_quay_username/myproject:latest .'
+                    sh 'docker build -t care_nlm/django_app:latest .'
                     sh 'docker login quay.io -u $QUAY_USERNAME -p $QUAY_PASSWORD'
-                    sh 'docker push your_quay_username/myproject:latest'
+                    sh 'docker push care_nlm/django_app:latest'
                 }
             }
         }
