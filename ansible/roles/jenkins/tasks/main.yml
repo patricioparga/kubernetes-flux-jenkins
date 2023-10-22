@@ -1,0 +1,75 @@
+---
+
+- name: Enable 8080 port in firewall
+  become: yes
+  become_method: sudo
+  vars:
+    ansible_become_password: "{{ ansible_remote_user_password }}"
+  ufw:
+    rule: allow
+    port: 8080
+    proto: tcp
+
+- name: Add Jenkins APT key
+  become: yes
+  become_method: sudo
+  vars:
+    ansible_become_password: "{{ ansible_remote_user_password }}"
+  get_url:
+    url: https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+    dest: /usr/share/keyrings/jenkins-keyring.asc
+    validate_certs: yes
+
+- name: Add Jenkins repository to sources.list.d
+  become: yes
+  become_method: sudo
+  copy:
+    content: |
+      deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/
+    dest: /etc/apt/sources.list.d/jenkins.list
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Installed required packages
+  become: yes
+  become_method: sudo
+  apt:
+    update_cache: yes
+    name:
+      - fontconfig
+      - openjdk-11-jre
+    state: present
+
+- name: Update APT cache and install Jenkins
+  become: yes
+  become_method: sudo
+  vars:
+    ansible_become_password: "{{ ansible_remote_user_password }}"
+  apt:
+    update_cache: yes
+    name: jenkins
+    state: present
+
+- name: Start and enable Jenkins service
+  become: yes
+  become_method: sudo
+  vars:
+    ansible_become_password: "{{ ansible_remote_user_password }}"
+  service:
+    name: jenkins
+    state: started
+    enabled: yes
+
+- name: Fetch Jenkins initial admin password
+  become: yes
+  become_method: sudo
+  vars:
+    ansible_become_password: "{{ ansible_remote_user_password }}"
+  shell: cat /var/lib/jenkins/secrets/initialAdminPassword
+  register: jenkins_password
+  
+
+- name: Print Jenkins initial admin password
+  debug:
+    var: jenkins_password.stdout

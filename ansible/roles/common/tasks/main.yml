@@ -1,0 +1,18 @@
+---
+- name: Update APT cache
+  become: yes
+  become_method: sudo
+  vars:
+    ansible_become_password: "{{ ansible_remote_user_password }}"
+  apt:
+    update_cache: yes
+
+- name: Install VIM
+  become: yes
+  become_method: sudo
+  vars:
+    ansible_become_password: "{{ ansible_remote_user_password }}"
+  apt:
+    update_cache: yes
+    name: vim
+    state: present
