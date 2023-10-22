@@ -104,3 +104,12 @@
   become_method: sudo
   pip:
     name: docker
+
+- name: Ensure Jenkins user is part of the Docker group
+  become: yes
+  become_method: sudo
+  user:
+    name: ubuntu-studio
+    groups: docker
+  notify:
+    - Restart Docker

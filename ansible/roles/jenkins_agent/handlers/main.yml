@@ -1,2 +1,7 @@
 ---
-# handlers file for jenkins_agent
+- name: Restart Docker
+  become: yes
+  become_method: sudo
+  service:
+    name: docker
+    state: restarted

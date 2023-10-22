@@ -41,11 +41,13 @@ pipeline {
 
         stage('Build Docker Image and Push to Quay') {
             steps {
-                script {
-                    // Assuming you have a Dockerfile to build your Django app
-                    sh 'docker build -t care_nlm/django_app:latest .'
-                    sh 'docker login quay.io -u $QUAY_USERNAME -p $QUAY_PASSWORD'
-                    sh 'docker push care_nlm/django_app:latest'
+                dir('django_app') {
+                    script {
+                        // Assuming you have a Dockerfile to build your Django app
+                        sh 'docker build -t care_nlm/django_app:latest .'
+                        sh 'docker login quay.io -u $QUAY_USERNAME -p $QUAY_PASSWORD'
+                        sh 'docker push care_nlm/django_app:latest'
+                    }
                 }
             }
         }
