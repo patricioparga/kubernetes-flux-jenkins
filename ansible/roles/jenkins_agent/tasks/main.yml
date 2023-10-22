@@ -1,0 +1,31 @@
+---
+- name: Installed required packages
+  become: yes
+  become_method: sudo
+  apt:
+    update_cache: yes
+    name:
+      - fontconfig
+      - openjdk-11-jre
+    state: present
+
+- name: Create the Jenkins home folder
+  become: yes
+  become_method: sudo
+  ansible.builtin.file:
+    path: /home/jenkins
+    state: directory
+  register: folder_created
+
+- name: Print a message if home folder was created
+  ansible.builtin.debug:
+    msg: "Folder '{{ folder_created.path }}' has been created."
+  when: folder_created.changed
+
+- name: Change jenkins home folder permissions
+  become: yes
+  become_method: sudo
+  ansible.builtin.file:
+    path: /home/jenkins
+    mode: '0777'
+  when: folder_created.changed
