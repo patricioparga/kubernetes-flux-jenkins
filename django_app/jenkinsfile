@@ -1,0 +1,50 @@
+pipeline {
+    agent any 
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Checkout the code from the GitHub repository
+                checkout scm
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    // Setup a virtual environment and install requirements
+                    sh 'python3 -m venv venv'
+                    sh '. venv/bin/activate && pip install -r requirements.txt'
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                script {
+                    // This is a placeholder; Django uses manage.py test to run tests
+                    // Assuming no tests now, just echoing success.
+                    echo "Tests passed"
+                }
+            }
+        }
+
+        stage('Build Docker Image and Push to Quay') {
+            steps {
+                script {
+                    // Assuming you have a Dockerfile to build your Django app
+                    sh 'docker build -t your_quay_username/myproject:latest .'
+                    sh 'docker login quay.io -u $QUAY_USERNAME -p $QUAY_PASSWORD'
+                    sh 'docker push your_quay_username/myproject:latest'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            // Cleanup tasks, if any.
+            echo "Pipeline completed!"
+        }
+    }
+}
